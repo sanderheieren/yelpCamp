@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express');
 const path = require('path')
 const mongoose = require('mongoose');
+const methodOverride = require('method-override');
 const Campground = require('./models/campground');
 
 const uri = process.env.ATLAS_URI; //'mongodb+srv://sanderheieren:sander123@yelp-camp.s8lwq.mongodb.net/yelp-camp?retryWrites=true&w=majority'
@@ -23,6 +24,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 app.get('/', (req, res) => {
   res.render('home.ejs')
@@ -57,6 +59,17 @@ app.get('/campgrounds/:id/edit', async (req, res) => {
 
 })
 
+app.put('/campgrounds/:id/', async (req, res) => {
+  // everything is under campground, check the input html
+  const campground = await Campground.findByIdAndUpdate(req.params.id, { ...req.body.campground });
+  res.redirect(`/campgrounds/${campground._id}`);
+})
+
+app.delete('/campgrounds/:id', async (req, res) => {
+  const { id } = req.params;
+  await Campground.findByIdAndDelete(id);
+  res.redirect('/campgrounds');
+})
 
 
 app.listen(3000, () => {
