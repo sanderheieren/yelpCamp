@@ -1,9 +1,10 @@
+require('dotenv').config()
 const express = require('express');
 const path = require('path')
 const mongoose = require('mongoose');
 const Campground = require('./models/campground');
 
-const uri = 'mongodb+srv://sanderheieren:sander123@yelp-camp.s8lwq.mongodb.net/yelp-camp?retryWrites=true&w=majority'
+const uri = process.env.ATLAS_URI; //'mongodb+srv://sanderheieren:sander123@yelp-camp.s8lwq.mongodb.net/yelp-camp?retryWrites=true&w=majority'
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
@@ -13,7 +14,7 @@ mongoose.connect(uri, {
 
 const connection = mongoose.connection;
 connection.once('open', () => {
-  console.log('mongodb datebase connection established sucsessfulyl');
+  console.log('mongodb database connection established successfully');
 })
 
 const app = express();
