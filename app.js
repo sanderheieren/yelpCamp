@@ -6,7 +6,7 @@ const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
 
-const uri = process.env.ATLAS_URI; //'mongodb+srv://sanderheieren:sander123@yelp-camp.s8lwq.mongodb.net/yelp-camp?retryWrites=true&w=majority'
+const uri = process.env.ATLAS_URI;
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
