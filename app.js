@@ -54,11 +54,12 @@ const validateReview = (req,res,next) =>{
   }
 } 
 
-app.get('/', (req, res) => {
-  res.render('home.ejs')
-});
+app.get('/', catchAsync(async(req, res) => {
+  const campgrounds = await Campground.find({});
+  res.render('campgrounds', { campgrounds })
+}));
 
-app.get('/campgrounds', catchAsync(async (req, res, next) => {
+app.get('/campgrounds', catchAsync(async (req, res) => {
   const campgrounds = await Campground.find({});
   res.render('campgrounds', { campgrounds })
 }));
@@ -67,27 +68,27 @@ app.get('/campgrounds/new', (req, res) => {
   res.render('campgrounds/new')
 });
 
-app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
+app.post('/campgrounds', validateCampground, catchAsync(async (req, res) => {
   // if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
   const campground = new Campground(req.body.campground);
   await campground.save();
   res.redirect(`/campgrounds/${campground._id}`);
 }))
 
-app.get('/campgrounds/:id', catchAsync(async (req, res, next) => {
+app.get('/campgrounds/:id', catchAsync(async (req, res) => {
   const { id } = req.params;
   const campground = await Campground.findById(id).populate('reviews');
   res.render('campgrounds/show', { campground })
 }));
 
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res, next) => {
+app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
   //want to prepopulate
   const { id } = req.params;
   const campground = await Campground.findById(id);
   res.render('campgrounds/edit', { campground })
 }))
 
-app.put('/campgrounds/:id/', validateCampground, catchAsync(async (req, res, next) => {
+app.put('/campgrounds/:id/', validateCampground, catchAsync(async (req, res) => {
   // everything is under campground, check the input html
   const campground = await Campground.findByIdAndUpdate(req.params.id, { ...req.body.campground });
   res.redirect(`/campgrounds/${campground._id}`);
@@ -105,7 +106,6 @@ app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req,res) 
   campground.reviews.push(review);
   review.save();
   campground.save();
-  console.log(review);
   res.redirect(`/campgrounds/${campground._id}`)
 }))
 
