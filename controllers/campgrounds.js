@@ -1,5 +1,5 @@
 const Campground = require('../models/campground');
-const { campgroundSchema } = require('../schemas');
+const { cloudinary } = require('../cloudinary');
 
 module.exports.index = async (req, res) => {
   const campgrounds = await Campground.find({});
@@ -51,9 +51,12 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateCampground = async (req, res) => {
   // everything is under campground, check the input html
   const {id} = req.params;
-  const camp = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
-  req.flash('success', 'successfully updated campground')
-  res.redirect(`/campgrounds/${camp._id}`);
+  const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+  const imgs = req.files.map(f => ({url: f.path, filename: f.filename}));
+  campground.images.push(...imgs);
+  await campground.save();
+  req.flash('success', 'successfully updated campground');
+  res.redirect(`/campgrounds/${campground._id}`);
 }
 
 module.exports.deleteCampground = async (req, res, next) => {
