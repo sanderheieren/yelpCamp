@@ -1,5 +1,5 @@
 <% layout('layouts/boilerplate')%>
-
+<div id="map" style="width: 100%; height: 500px;"></div>
   <h1>All Campgrounds</h1>
   <div>
     <a href="/campgrounds/new">Add Campground</a>
@@ -34,3 +34,9 @@
       </div>
     </div>
     <% }%>
+    <script>
+      const mapToken = '<%-process.env.MAPBOX_TOKEN%>'; // to have access to it in our js file
+      const campgrounds = {features: <%- JSON.stringify(campgrounds) %>} // mapbox expect an object with features, so we just add it. this is what we will see in the browser
+    </script>
+
+    <script src="javascripts/clusterMap.js"></script>

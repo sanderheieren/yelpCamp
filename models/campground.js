@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 
 // https://res.cloudinary.com/douqbebwk/image/upload/w_300/v1600113904/YelpCamp/gxgle1ovzd2f3dgcpass.png
-
+// could make new file, but just keeping it here
 const ImageSchema = new Schema({
     url: String,
     filename: String
@@ -41,9 +41,14 @@ const CampgroundSchema = new Schema({
             ref: 'Review' // an object id from a review model
         }
     ]
+    // so you can see virtuals in the broswer
+}, {toJSON: {virtuals: true}});
+
+// virtuals wont be stored in the database, but can be accessed 
+CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+    return `<strong><a href="/campgrounds/${this._id}">${this.title}</a></strong>
+    <p>${this.description.substring(0,30)}...</p>`
 });
-
-
 
 CampgroundSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {
