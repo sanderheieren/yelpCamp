@@ -65,9 +65,6 @@ app.use((req, res, next) => {
   next();
 })
 
-app.get('/fakeUser', async(req, res) => {
- 
-})
 
 app.use('/', userRoutes);
 app.use('/campgrounds', campgroundRoutes);
