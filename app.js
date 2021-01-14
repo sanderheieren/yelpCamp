@@ -19,6 +19,8 @@ const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 
+const MongoDBStore = require('connect-mongo')(session)
+
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, {
   useNewUrlParser: true,
@@ -42,9 +44,22 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
 
+const secret = process.env.SECRET || 'asecret';
+
+const store = new MongoDBStore({
+  url: uri,
+  secret,
+  touchAfter: 24 * 60 * 60
+})
+
+store.on('error', function(e) {
+  console.log("store error", e);
+})
+
 const sessionConfig = {
+  store,
   name: 'session', // to not use default name
-  secret: 'asecret',
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
